@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Accounting System</title>
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#6c63ff"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#f4f1ff;--card:#fff;--tx:#2d2a4a;--sub:#7a7899;--ln:#e6e2f5;--pri:#6c63ff;--pink:#ff6b9d;--ok:#2dbe8c;--bad:#ff5c7a;--g0:#6c63ff;--g1:#9b5de5;--g2:#2ba8d8;--g3:#2dbe8c;--g4:#f59e0b}
+body.dark{--bg:#141228;--card:#211d3d;--tx:#edebff;--sub:#a19fc4;--ln:#39345e}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font:15px/1.45 "Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--tx)}
+button,input,select{font:inherit;color:inherit}
+.btn{border:0;border-radius:99px;padding:.6em 1.2em;font-weight:600;color:#fff;cursor:pointer;background:linear-gradient(90deg,var(--pri),var(--g1))}
+.btn.g{background:linear-gradient(90deg,#1fa97a,var(--ok))}.btn.r{background:linear-gradient(90deg,var(--bad),#ff8a5c)}.btn.s{background:rgba(255,255,255,.25)}.btn.o{background:linear-gradient(90deg,#d97706,var(--g4))}
+:focus-visible{outline:2px solid var(--pri);outline-offset:2px}
+input,select{background:var(--bg);border:1px solid var(--ln);border-radius:10px;padding:.5em .7em;width:100%}
+.card{background:var(--card);border-radius:20px;padding:18px;box-shadow:0 4px 18px rgba(80,60,160,.1)}
+#login{min-height:100vh;display:grid;place-items:center;background:linear-gradient(135deg,var(--pri),var(--pink));padding:20px}
+#login .card{width:min(400px,100%);display:grid;gap:8px;color:#2d2a4a;background:#fff}#login input{color:#2d2a4a;background:#faf8ff}
+#login h1{color:#fff;font-size:clamp(32px,6vw,52px);margin:0;text-align:center}#login .tag{color:#ffffffe6;text-align:center;margin:0 0 16px}
+.err{color:var(--bad);font-weight:600;min-height:1.4em;font-size:13px}.hint{color:var(--sub);font-size:13px;margin:0}
+header{margin:14px;border-radius:24px;padding:16px 22px;color:#fff;display:flex;gap:12px;align-items:center;flex-wrap:wrap;background:linear-gradient(100deg,var(--pri),var(--pink))}
+header h1{margin:0;font-size:28px}header p{margin:0;opacity:.9}header .sp{flex:1}
+nav{display:flex;gap:10px;margin:0 14px 12px;flex-wrap:wrap}
+nav button{border:1px solid var(--ln);background:var(--card);border-radius:99px;padding:.65em 1.5em;font-weight:600;cursor:pointer}
+nav button.on{color:#fff;border-color:transparent;background:linear-gradient(90deg,var(--pri),var(--pink))}
+main{padding:0 14px 20px}section{display:none}section.on{display:block}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:end}
+.form label{font-size:12px;font-weight:700;color:var(--sub)}
+.wrap{overflow:auto;margin-top:14px;border-radius:16px;background:var(--card);box-shadow:0 4px 18px rgba(80,60,160,.1)}
+table{border-collapse:collapse;width:100%;min-width:760px}th,td{padding:3px 6px;border-bottom:1px solid var(--ln);white-space:nowrap}
+th{color:#fff;font-size:12px;padding:8px}thead th{background:#334155}
+table input,table select{border-color:transparent;background:transparent;padding:.35em .45em;border-radius:6px}
+table input:hover,table select:hover{border-color:var(--ln)}table input:focus,table select:focus{border-color:var(--pri);background:var(--bg)}
+.r{text-align:right}input.r{text-align:right}.x{border:0;background:none;color:var(--bad);cursor:pointer;font-size:16px}
+.empty{text-align:center;color:var(--sub);padding:34px}
+.g0{background:var(--g0)!important}.g1{background:var(--g1)!important}.g2{background:var(--g2)!important}.g3{background:var(--g3)!important}.g4{background:var(--g4)!important}
+.c2{background:#2ba8d814}.c3{background:#2dbe8c14}.c4{background:#f59e0b14}tfoot th,tfoot td{background:#6c63ff1f;font-weight:700}
+.pos{color:var(--ok)}.neg{color:var(--bad)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.stat small{color:var(--sub);font-weight:700}.stat b{display:block;font-size:26px}.badge b{font-size:20px}.badge.ok b{color:var(--ok)}.badge.bad b{color:var(--bad)}
+.led{display:grid;grid-template-columns:minmax(260px,1fr) 2fr;gap:14px;margin-top:14px}@media(max-width:800px){.led{grid-template-columns:1fr}}
+.t{display:grid;grid-template-columns:1fr 1fr;border-top:2px solid var(--tx)}.t>div{padding:8px 10px}.t>div:first-child{border-right:2px solid var(--tx)}
+.t p{display:flex;justify-content:space-between;margin:4px 0;font-size:14px}.bal{font-weight:700;text-align:center;margin:10px 0 0}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(90px);background:var(--ok);color:#fff;padding:.7em 1.4em;border-radius:99px;font-weight:600;transition:.3s;z-index:9}
+#toast.bad{background:var(--bad)}#toast.show{transform:translateX(-50%)}
+dialog{border:0;border-radius:20px;max-width:620px;padding:24px;background:var(--card);color:var(--tx)}dialog::backdrop{background:#0008}dialog li{margin:6px 0}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body>
+
+<section id="login" style="display:grid"><div style="width:min(400px,100%)">
+<h1>Accounting System</h1><p class="tag">Simple bookkeeping for everyone</p>
+<div class="card"><h2 style="margin:0">Welcome!</h2>
+<p class="hint">New here? Type a username and password, then press Create account. Already have one? Press Log in.</p>
+<label for="lu" class="hint">Username or email</label><input id="lu" autocomplete="username" placeholder="Username or email">
+<label for="lp" class="hint">Password</label><input id="lp" type="password" autocomplete="current-password" placeholder="At least 6 characters">
+<div class="err" id="lerr"></div>
+<button class="btn" id="bin">Log in</button><button class="btn g" id="bup">Create account</button></div></div></section>
+
+<div id="app" hidden>
+<header><div><h1>Accounting System</h1><p id="hello">Simple bookkeeping for everyone</p></div><span class="sp"></span>
+<button class="btn s" id="bguide">? Guide</button><button class="btn s" id="btheme">Dark mode</button><button class="btn s" id="bout">Log out</button></header>
+<nav><button data-t="j" class="on">1. Journal</button><button data-t="l">2. General ledger</button><button data-t="w">3. Worksheet</button></nav>
+<main>
+<section id="j" class="on"><div class="card"><div class="form">
+<div style="grid-column:1/-1"><label>Quick start - pick an example and the form fills itself in</label><select id="quick"></select></div>
+<div><label>Date</label><input id="fd" type="date"></div><div><label>What happened?</label><input id="fs" placeholder="e.g. Paid for office supplies"></div>
+<div><label>Debit (gets the value)</label><select id="fr"></select></div><div><label>Credit (gives the value)</label><select id="fc"></select></div>
+<div><label>Amount</label><input id="fa" inputmode="decimal" placeholder="e.g. 1500.00"></div>
+<div><label><input type="checkbox" id="fj" style="width:auto"> Adjusting entry</label></div>
+<div><button class="btn g" id="post" style="width:100%">+ Post transaction</button></div></div>
+<p class="hint" style="margin-top:10px">Tip: debit = what you received or spent on. Credit = where it came from. Typo? Change any cell in the list below - it saves by itself.</p></div>
+<div class="wrap"><table><thead><tr><th>Date</th><th>Description</th><th>Debit</th><th>Credit</th><th>Amount</th><th>Type</th><th></th></tr></thead><tbody id="jb"></tbody></table></div></section>
+
+<section id="l"><div class="card"><label class="hint">Account</label><select id="la"></select></div>
+<div class="led"><div class="card" id="tacc"></div><div class="wrap" style="margin:0"><table><thead><tr><th>Date</th><th>Description</th><th>Debit</th><th>Credit</th><th>Balance</th></tr></thead><tbody id="lb"></tbody></table></div></div></section>
+
+<section id="w"><div class="stats">
+<div class="card stat"><small>Total income</small><b id="si">0.00</b></div><div class="card stat"><small>Total expenses</small><b id="se">0.00</b></div>
+<div class="card stat"><small id="sl">Net income</small><b id="sn">0.00</b></div><div class="card stat badge" id="sb"><small id="sm"></small><b id="st"></b></div></div>
+<p class="hint" style="margin-top:12px">Click any plain cell (account name, type, unadjusted, adjustments) to edit it. The tinted columns are calculated for you.</p>
+<div class="wrap" style="margin-top:6px"><table style="min-width:1150px"><thead id="wh"></thead><tbody id="wbd"></tbody><tfoot id="wf"></tfoot></table></div>
+<p style="text-align:center;margin-top:14px"><button class="btn" id="wadd">+ Add account</button> <button class="btn g" id="wsam">Load sample</button> <button class="btn o" id="wclr">Clear all numbers</button></p></section>
+</main></div>
+
+<dialog id="guide"><h2 style="margin-top:0">Quick guide</h2><ol>
+<li><b>Journal</b> - record each transaction: pick the debit account, the credit account and the amount. The same amount always goes on both sides.</li>
+<li><b>General ledger</b> - choose an account to see its T-account and running balance.</li>
+<li><b>Worksheet</b> - trial balance, adjustments, income statement, balance sheet and net income are worked out for you. Green means debit = credit.</li></ol>
+<p><b>Account types:</b> Asset (what you own), Liability (what you owe), Capital (owner's investment), Drawing (owner takes money out), Revenue (money earned), Expense (cost of running).
+An <b>adjusting entry</b> is recorded at the end of the period: supplies used, insurance expired, depreciation.</p>
+<p>Your work saves automatically. Want an example? Worksheet tab, then Load sample.</p><button class="btn" onclick="this.closest('dialog').close()">Got it</button></dialog>
+<div id="toast"></div>
+
+<script type="module">
+import{initializeApp}from'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut}from'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
+import{initializeFirestore,getFirestore,persistentLocalCache,persistentMultipleTabManager,collection,doc,addDoc,updateDoc,deleteDoc,getDocs,writeBatch,query,where}from'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+import{firebaseConfig}from'./firebase-config.js';
+const fapp=initializeApp(firebaseConfig),fa=getAuth(fapp);
+let db;try{db=initializeFirestore(fapp,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})})}catch(e){db=getFirestore(fapp)}
+const STD=[['Cash','Asset'],['Account Receivable','Asset'],['Office Supplies','Asset'],['Prepaid Insurance','Asset'],['Prepaid Rent','Asset'],['Equipment','Asset'],['Accumulated Depreciation - Equipment','Asset'],['Furniture','Asset'],['Vehicles','Asset'],['Accounts Payable','Liability'],['Unearned Revenue','Liability'],['Notes Payable','Liability'],['Salaries Payable','Liability'],["Owner's Capital",'Capital'],["Owner's Drawing",'Drawing'],['Service Revenue','Revenue'],['Advertising Expense','Expense'],['Utilities Expense','Expense'],['Salaries Expense','Expense'],['Maintenance Expense','Expense'],['Professional Fee Expense','Expense'],['Repairs Expense','Expense'],['Rent Expense','Expense'],['Interest Expense','Expense'],['Insurance Expense','Expense'],['Supplies Expense','Expense'],['Depreciation Expense','Expense']];
+const SAMPLE=[['2026-10-01','Owner invested cash','Cash',"Owner's Capital",100000,0],['2026-10-02','Bought equipment','Equipment','Cash',15000,0],['2026-10-03','Bought furniture on account','Furniture','Accounts Payable',18000,0],['2026-10-04','Paid 3 months rent in advance','Prepaid Rent','Cash',3000,0],['2026-10-05','Paid 1 year insurance','Prepaid Insurance','Cash',2400,0],['2026-10-06','Bought office supplies','Office Supplies','Cash',2600,0],['2026-10-08','Borrowed from the bank','Cash','Notes Payable',20000,0],['2026-10-10','Service income in cash','Cash','Service Revenue',37800,0],['2026-10-12','Services on account','Account Receivable','Service Revenue',5400,0],['2026-10-13','Advance from client','Cash','Unearned Revenue',6000,0],['2026-10-15','Paid salaries','Salaries Expense','Cash',18800,0],['2026-10-16','Paid advertising','Advertising Expense','Cash',2300,0],['2026-10-17','Paid utilities','Utilities Expense','Cash',1250,0],['2026-10-18','Paid part of payable','Accounts Payable','Cash',8000,0],['2026-10-20','Paid repairs','Repairs Expense','Cash',500,0],['2026-10-25','Owner withdrew cash',"Owner's Drawing",'Cash',3500,0],['2026-10-31','Insurance expired','Insurance Expense','Prepaid Insurance',200,1],['2026-10-31','Supplies used','Supplies Expense','Office Supplies',1500,1],['2026-10-31','Rent expired','Rent Expense','Prepaid Rent',1000,1],['2026-10-31','Depreciation','Depreciation Expense','Accumulated Depreciation - Equipment',1600,1],['2026-10-31','Accrued salaries','Salaries Expense','Salaries Payable',400,1],['2026-10-31','Unearned revenue earned','Unearned Revenue','Service Revenue',1000,1]];
+const ERR={'auth/invalid-credential':'Wrong username or password. New here? Press Create account.','auth/user-not-found':'No account with that name yet. Press Create account.','auth/wrong-password':'That password is not correct.','auth/email-already-in-use':'That username is taken. Try another one.','auth/weak-password':'Password needs at least 6 characters.','auth/invalid-email':'Please use a valid username or email.','auth/network-request-failed':'No internet connection.','auth/operation-not-allowed':'Turn on Email/Password in Firebase Authentication (see README).','permission-denied':'Permission denied. Deploy the Firestore rules (see README).'};
+const nm=u=>u.email.endsWith('@accountingsystem.app')?u.email.split('@')[0]:u.email;
+const toEmail=u=>u.includes('@')?u:u.toLowerCase()+'@accountingsystem.app';
+const col=n=>collection(db,'users',fa.currentUser.uid,n),dref=(n,id)=>doc(db,'users',fa.currentUser.uid,n,id);
+const need=()=>{if(!fa.currentUser)throw Error('Please log in first.')};
+const ZERO={m0:0,m1:0,m2:0,m3:0};
+async function wipe(){need();const[a,t]=await Promise.all([getDocs(col('accounts')),getDocs(col('transactions'))]);const bt=writeBatch(db);t.docs.forEach(d=>bt.delete(d.ref));a.docs.forEach(d=>bt.update(d.ref,ZERO));await bt.commit();return a.docs}
+const A={
+ async me(){await fa.authStateReady();return{user:fa.currentUser?nm(fa.currentUser):null}},
+ async logout(){await signOut(fa);return{}},
+ async register(b){const u=(b.username||'').trim();
+  if(!u.includes('@')&&!/^[A-Za-z0-9_]{3,20}$/.test(u))throw Error('Username: 3-20 letters, numbers or _ (no spaces).');
+  if((b.password||'').length<6)throw Error('Password needs at least 6 characters.');
+  const c=await createUserWithEmailAndPassword(fa,toEmail(u),b.password);
+  const bt=writeBatch(db);STD.forEach(([n,t],i)=>bt.set(doc(col('accounts')),{name:n,type:t,...ZERO,ord:i}));await bt.commit();return{user:nm(c.user)}},
+ async login(b){const c=await signInWithEmailAndPassword(fa,toEmail((b.username||'').trim()),b.password||'');return{user:nm(c.user)}},
+ async data(){need();const[a,t]=await Promise.all([getDocs(col('accounts')),getDocs(col('transactions'))]);
+  return{accounts:a.docs.map(d=>({id:d.id,...d.data()})).sort((x,y)=>(x.ord||0)-(y.ord||0)),
+   txns:t.docs.map(d=>({id:d.id,...d.data()})).sort((x,y)=>x.tdate<y.tdate?-1:x.tdate>y.tdate?1:(x.ts||0)-(y.ts||0))}},
+ async'account.save'(b){need();const n=(b.name||'').trim().slice(0,80),t=b.type||'Asset';
+  if(!n)throw Error('Account name cannot be empty.');
+  if(!['Asset','Liability','Capital','Drawing','Revenue','Expense'].includes(t))throw Error('Unknown account type.');
+  const all=await getDocs(col('accounts'));
+  if(all.docs.some(d=>d.id!==b.id&&d.data().name===n))throw Error('You already have an account with that name.');
+  if(b.id)await updateDoc(dref('accounts',b.id),{name:n,type:t});else await addDoc(col('accounts'),{name:n,type:t,...ZERO,ord:Date.now()});return{}},
+ async'account.delete'(b){need();const[x,y]=await Promise.all([getDocs(query(col('transactions'),where('debit_id','==',b.id))),getDocs(query(col('transactions'),where('credit_id','==',b.id)))]);
+  if(x.size||y.size)throw Error('This account has transactions. Delete or change those first.');
+  await deleteDoc(dref('accounts',b.id));return{}},
+ async'account.manual'(b){need();const k=+b.k;if(!(k>=0&&k<=3))throw Error('Bad column.');await updateDoc(dref('accounts',b.id),{['m'+k]:Math.round((+b.value||0)*100)/100});return{}},
+ async'txn.save'(b){need();const d=b.tdate||'',am=Math.round((+b.amount||0)*100)/100;
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(d))throw Error('The date must look like 2026-10-23.');
+  if(!b.debit_id||!b.credit_id||b.debit_id===b.credit_id)throw Error('The debit and credit accounts must be different.');
+  if(!(am>0))throw Error('The amount must be more than zero.');
+  const data={tdate:d,description:((b.description||'').trim()||'Transaction').slice(0,200),debit_id:b.debit_id,credit_id:b.credit_id,amount:am,adjusting:b.adjusting?1:0};
+  if(b.id)await updateDoc(dref('transactions',b.id),data);else await addDoc(col('transactions'),{...data,ts:Date.now()});return{}},
+ async'txn.delete'(b){need();await deleteDoc(dref('transactions',b.id));return{}},
+ async clear(){await wipe();return{}},
+ async sample(){const a=await wipe(),ids={};a.forEach(d=>ids[d.data().name]=d.id);const bt=writeBatch(db);
+  SAMPLE.forEach(([d,s,dr,cr,am,aj],i)=>{if(ids[dr]&&ids[cr])bt.set(doc(col('transactions')),{tdate:d,description:s,debit_id:ids[dr],credit_id:ids[cr],amount:am,adjusting:aj,ts:Date.now()+i})});
+  await bt.commit();return{}}
+};
+async function api(a,b){try{if(!A[a])throw Error('Unknown action');return await A[a](b||{})}catch(e){const m=ERR[e.code]||e.message||'Something went wrong';toast(m,1);throw Error(m)}}
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>parseFloat(String(v).replace(/,/g,''))||0,eq=(a,b)=>Math.abs(a-b)<.005;
+const fmt=n=>Math.abs(n)<.005?'':n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const TY=['Asset','Liability','Capital','Drawing','Revenue','Expense'],G=['Unadjusted trial balance','Adjustments','Adjusted trial balance','Income statement','Balance sheet'];
+const QS=[["Owner invests cash","Cash","Owner's Capital","Owner invested cash",0],["Earned income - paid in cash","Cash","Service Revenue","Service income received",0],
+["Earned income - customer pays later","Account Receivable","Service Revenue","Service on account",0],["Customer paid what they owed","Cash","Account Receivable","Collected from customer",0],
+["Bought equipment with cash","Equipment","Cash","Bought equipment",0],["Paid salaries","Salaries Expense","Cash","Paid salaries",0],["Paid rent","Rent Expense","Cash","Paid rent",0],
+["Owner took money out","Owner's Drawing","Cash","Owner withdrew cash",0],["ADJUSTING: supplies used up","Supplies Expense","Office Supplies","Supplies used",1],
+["ADJUSTING: equipment lost value","Depreciation Expense","Accumulated Depreciation - Equipment","Depreciation",1]];
+let S={accounts:[],txns:[]};
+function toast(m,bad){const t=$('#toast');t.textContent=m;t.className=bad?'bad show':'show';clearTimeout(t.h);t.h=setTimeout(()=>t.className='',3500)}
+async function load(){const d=await api('data');
+ S.accounts=d.accounts.map(a=>({id:a.id,name:a.name,type:a.type,m:[+a.m0,+a.m1,+a.m2,+a.m3]}));
+ S.txns=d.txns.map(t=>({id:t.id,date:t.tdate,desc:t.description,dr:t.debit_id,cr:t.credit_id,amt:+t.amount,adj:+t.adjusting}));render()}
+function calc(){const by={};S.accounts.forEach(a=>{a.jr=[0,0,0,0];by[a.id]=a});
+ S.txns.forEach(t=>{const d=by[t.dr],c=by[t.cr];if(d)d.jr[t.adj?2:0]+=t.amt;if(c)c.jr[t.adj?3:1]+=t.amt});
+ const tot=Array(10).fill(0);
+ S.accounts.forEach(a=>{a.in=a.m.map((m,k)=>m+a.jr[k]);const n=a.in[0]-a.in[1]+a.in[2]-a.in[3],dr=Math.max(n,0),cr=Math.max(-n,0),pl=a.type=='Revenue'||a.type=='Expense';
+  a.out=[dr,cr,pl?dr:0,pl?cr:0,pl?0:dr,pl?0:cr];[...a.in,...a.out].forEach((v,i)=>tot[i]+=v)});
+ const ni=tot[7]-tot[6];return{tot,ni,fin:[tot[6]+(ni>0?ni:0),tot[7]+(ni<0?-ni:0),tot[8]+(ni<0?-ni:0),tot[9]+(ni>0?ni:0)]}}
+const opts=sel=>S.accounts.map(a=>`<option value="${a.id}"${a.id==sel?' selected':''}>${esc(a.name)}</option>`).join('');
+function count(el,to){const from=+el.dataset.v||0;el.dataset.v=to;const t0=performance.now(),f=t=>{const p=matchMedia('(prefers-reduced-motion:reduce)').matches?1:Math.min(1,(t-t0)/600);
+ el.textContent=(from+(to-from)*(1-Math.pow(1-p,3))).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});if(p<1)requestAnimationFrame(f)};requestAnimationFrame(f)}
+function render(){const R=calc();journal();ledger();sheet(R)}
+function journal(){const keep=[$('#fr').value,$('#fc').value];$('#fr').innerHTML=opts(keep[0]);$('#fc').innerHTML=opts(keep[1]||(S.accounts[1]||{}).id);
+ $('#jb').innerHTML=S.txns.map(t=>`<tr data-id="${t.id}"><td><input type="date" class="d" value="${t.date}"></td><td><input class="s" value="${esc(t.desc)}"></td><td><select class="dr">${opts(t.dr)}</select></td><td><select class="cr">${opts(t.cr)}</select></td><td><input class="a r" value="${fmt(t.amt)}"></td><td><select class="j"><option value="0">Regular<option value="1"${t.adj?' selected':''}>Adjusting</select></td><td><button class="x" title="Delete transaction">&#10005;</button></td></tr>`).join('')
+ ||'<tr><td colspan="7" class="empty"><b>No transactions yet</b><br>Pick a Quick start example above, or fill in the form, then press Post transaction.</td></tr>'}
+function ledger(){const sel=$('#la'),id=sel.value||(S.accounts[0]||{}).id;sel.innerHTML=opts(id);const a=S.accounts.find(x=>x.id==id);if(!a){$('#lb').innerHTML='';$('#tacc').innerHTML='';return}
+ let bal=0,dt=0,ct=0;const ls=S.txns.filter(t=>t.dr==id||t.cr==id).map(t=>{const d=t.dr==id;bal+=d?t.amt:-t.amt;d?dt+=t.amt:ct+=t.amt;return{...t,d,bal}});
+ $('#lb').innerHTML=ls.map(l=>`<tr data-id="${l.id}"><td><input type="date" class="d" value="${l.date}"></td><td><input class="s" value="${esc(l.desc)}"></td><td><input class="ld r" value="${l.d?fmt(l.amt):''}"></td><td><input class="lc r" value="${l.d?'':fmt(l.amt)}"></td><td class="r">${fmt(Math.abs(l.bal))||'0.00'} ${l.bal>=0?'Dr':'Cr'}</td></tr>`).join('')
+ ||'<tr><td colspan="5" class="empty"><b>No entries for this account yet</b><br>Post a transaction in the Journal and it will show up here.</td></tr>';
+ const side=d=>ls.filter(l=>l.d==d).map(l=>`<p><span>${l.date.slice(5)}</span><span>${fmt(l.amt)}</span></p>`).join('');
+ $('#tacc').innerHTML=`<h3 style="margin:0 0 4px;text-align:center">${esc(a.name)}</h3><p class="hint" style="text-align:center;margin-bottom:10px">${a.type} account</p><div class="t"><div><b>Debit</b>${side(true)}</div><div><b>Credit</b>${side(false)}</div></div><p class="bal ${bal>=0?'pos':'neg'}">Ending balance ${fmt(Math.abs(bal))||'0.00'} ${bal>=0?'Dr':'Cr'}</p>`}
+function sheet(R){const{tot,ni,fin}=R,f=v=>v.map(x=>`<td class="r">${fmt(x)}</td>`).join('');
+ $('#wh').innerHTML=`<tr><th rowspan="2">Account</th><th rowspan="2">Type</th>${G.map((g,i)=>`<th colspan="2" class="g${i}">${g}</th>`).join('')}<th rowspan="2"></th></tr><tr>${G.map((g,i)=>`<th class="g${i}">Debit</th><th class="g${i}">Credit</th>`).join('')}</tr>`;
+ $('#wbd').innerHTML=S.accounts.map(a=>`<tr data-id="${a.id}"><td><input class="wn" value="${esc(a.name)}"></td><td><select class="wt">${TY.map(t=>`<option${t==a.type?' selected':''}>${t}</option>`).join('')}</select></td>${a.in.map((v,k)=>`<td><input class="wc r" data-k="${k}" value="${fmt(v)}"></td>`).join('')}${a.out.map((v,i)=>`<td class="r c${2+(i>>1)}">${fmt(v)}</td>`).join('')}<td><button class="x" title="Delete account">&#10005;</button></td></tr>`).join('');
+ $('#wf').innerHTML=`<tr><th colspan="2">Totals</th>${f(tot)}<td></td></tr><tr><th colspan="2" class="${ni>=0?'pos':'neg'}">${ni>=0?'Net income':'Net loss'}</th><td colspan="6"></td><td class="r">${ni>0?fmt(ni):''}</td><td class="r">${ni<0?fmt(-ni):''}</td><td class="r">${ni<0?fmt(-ni):''}</td><td class="r">${ni>0?fmt(ni):''}</td><td></td></tr><tr><th colspan="2">Totals</th><td colspan="6"></td>${f(fin)}<td></td></tr>`;
+ count($('#si'),tot[7]);count($('#se'),tot[6]);count($('#sn'),ni);$('#sl').textContent=ni>=0?'Net income':'Net loss';
+ const ok=[eq(tot[0],tot[1]),eq(tot[2],tot[3]),eq(tot[4],tot[5]),eq(fin[0],fin[1]),eq(fin[2],fin[3])],bad=ok.indexOf(false),empty=!(tot[0]||tot[1]||tot[2]||tot[3]);
+ $('#sb').className='card stat badge '+(bad<0?'ok':'bad');$('#st').textContent=bad<0?'Balanced':'Not balanced';
+ $('#sm').textContent=empty?'Add a transaction to begin':bad<0?'Debit = credit in every column':'Check: '+G[bad]}
+const row=(tr,c)=>tr.querySelector('.'+c);
+async function saveTx(b){await api('txn.save',b);await load()}
+$('#jb').onchange=e=>{const tr=e.target.closest('tr');saveTx({id:tr.dataset.id,tdate:row(tr,'d').value,description:row(tr,'s').value,debit_id:row(tr,'dr').value,credit_id:row(tr,'cr').value,amount:num(row(tr,'a').value),adjusting:+row(tr,'j').value})};
+$('#jb').onclick=async e=>{if(!e.target.classList.contains('x')||!confirm('Delete this transaction?'))return;await api('txn.delete',{id:e.target.closest('tr').dataset.id});load()};
+$('#lb').onchange=e=>{const tr=e.target.closest('tr'),t=S.txns.find(x=>x.id==tr.dataset.id),id=$('#la').value,c=e.target.className.split(' ')[0];
+ const b={id:t.id,tdate:t.date,description:t.desc,debit_id:t.dr,credit_id:t.cr,amount:t.amt,adjusting:t.adj};
+ if(c=='d')b.tdate=e.target.value;else if(c=='s')b.description=e.target.value;else{const v=num(e.target.value);if(v<=0)return load();b.amount=v;if((t.dr==id)!=(c=='ld'))[b.debit_id,b.credit_id]=[t.cr,t.dr]}saveTx(b)};
+$('#la').onchange=ledger;
+$('#wbd').onchange=async e=>{const tr=e.target.closest('tr'),a=S.accounts.find(x=>x.id==tr.dataset.id),c=e.target.className.split(' ')[0];
+ if(c=='wc'){const k=+e.target.dataset.k;await api('account.manual',{id:a.id,k,value:Math.round((num(e.target.value)-a.jr[k])*100)/100})}
+ else await api('account.save',{id:a.id,name:row(tr,'wn').value,type:row(tr,'wt').value});load()};
+$('#wbd').onclick=async e=>{if(!e.target.classList.contains('x'))return;const id=e.target.closest('tr').dataset.id;if(!confirm('Delete this account?'))return;await api('account.delete',{id});load()};
+$('#wadd').onclick=async()=>{await api('account.save',{name:'New account '+(S.accounts.length+1),type:'Asset'});load()};
+$('#wsam').onclick=async()=>{if(confirm('Replace your transactions with the sample books?')){await api('sample',{});load()}};
+$('#wclr').onclick=async()=>{if(confirm('Delete ALL transactions and typed numbers? Account names stay.')){await api('clear',{});load()}};
+$('#quick').innerHTML='<option value="">Choose an example...</option>'+QS.map((q,i)=>`<option value="${i}">${q[0]}</option>`).join('');
+$('#quick').onchange=e=>{const q=QS[e.target.value];if(!q)return;const id=n=>(S.accounts.find(a=>a.name==n)||{}).id;
+ if(id(q[1]))$('#fr').value=id(q[1]);if(id(q[2]))$('#fc').value=id(q[2]);$('#fs').value=q[3];$('#fj').checked=!!q[4];e.target.value='';$('#fa').focus()};
+$('#post').onclick=async()=>{await api('txn.save',{tdate:$('#fd').value,description:$('#fs').value,debit_id:$('#fr').value,credit_id:$('#fc').value,amount:num($('#fa').value),adjusting:$('#fj').checked?1:0});
+ $('#fs').value='';$('#fa').value='';await load();toast('Posted! See it in the ledger and worksheet.');$('#fs').focus()};
+$('#fa').onkeydown=e=>{if(e.key=='Enter')$('#post').click()};
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button,main>section').forEach(x=>x.classList.remove('on'));b.classList.add('on');$('#'+b.dataset.t).classList.add('on')});
+$('#bguide').onclick=()=>$('#guide').showModal();
+$('#btheme').onclick=()=>{const d=document.body.classList.toggle('dark');$('#btheme').textContent=d?'Light mode':'Dark mode';localStorage.setItem('dark',d?1:0)};
+$('#bout').onclick=async()=>{await api('logout',{});location.reload()};
+async function enter(u){$('#login').style.display='none';$('#app').hidden=false;const h=new Date().getHours();$('#hello').textContent=(h<12?'Good morning':h<18?'Good afternoon':'Good evening')+', '+u;$('#fd').value=new Date().toISOString().slice(0,10);await load()}
+async function auth(a){$('#lerr').textContent='';try{const d=await api(a,{username:$('#lu').value.trim(),password:$('#lp').value});await enter(d.user);if(a=='register')$('#guide').showModal()}catch(e){$('#lerr').textContent=e.message}}
+$('#bin').onclick=()=>auth('login');$('#bup').onclick=()=>auth('register');$('#lp').onkeydown=e=>{if(e.key=='Enter')auth('login')};
+if(localStorage.getItem('dark')==1){document.body.classList.add('dark');$('#btheme').textContent='Light mode'}
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+api('me').then(d=>{if(d.user)enter(d.user)}).catch(()=>{});
+</script></body></html>
