@@ -12,7 +12,8 @@ Fill in your role after the dash. Examples: Front end / Back end / Database / Do
 - Johnerie Anero - 
 - Marimar Mariñas - 
 - Shiela Sel -
-- Willyy Semontiza - 
+- Willyy Semontiza -
+- JeoMil Gracia
 
 ---
 
