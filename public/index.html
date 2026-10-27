@@ -4,7 +4,9 @@
 <link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#6c63ff"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
 <style>
 :root{--bg:#f4f1ff;--card:#fff;--tx:#2d2a4a;--sub:#7a7899;--ln:#e6e2f5;--pri:#6c63ff;--pink:#ff6b9d;--ok:#2dbe8c;--bad:#ff5c7a;--g0:#6c63ff;--g1:#9b5de5;--g2:#2ba8d8;--g3:#2dbe8c;--g4:#f59e0b}
-body.dark{--bg:#141228;--card:#211d3d;--tx:#edebff;--sub:#a19fc4;--ln:#39345e}
+body.dark{--bg:#0b1747;--card:#112463;--tx:#f2f5ff;--sub:#a9bff0;--ln:#24408c}
+body.dark header{background:linear-gradient(100deg,#a99dff,#ff86b4)}
+body.dark nav button{background:transparent;border:1.5px solid #2f6bd8;color:#fff}body.dark nav button.on{background:linear-gradient(90deg,#8f9bff,#ff8fc0);border-color:transparent}
 *{box-sizing:border-box}[hidden]{display:none!important}
 body{margin:0;font:15px/1.45 "Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--tx)}
 button,input,select{font:inherit;color:inherit}
@@ -43,6 +45,22 @@ table input:hover,table select:hover{border-color:var(--ln)}table input:focus,ta
 #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(90px);background:var(--ok);color:#fff;padding:.7em 1.4em;border-radius:99px;font-weight:600;transition:.3s;z-index:9}
 #toast.bad{background:var(--bad)}#toast.show{transform:translateX(-50%)}
 dialog{border:0;border-radius:20px;max-width:620px;padding:24px;background:var(--card);color:var(--tx)}dialog::backdrop{background:#0008}dialog li{margin:6px 0}
+
+nav button{display:inline-flex;align-items:center;gap:.55em}nav svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.logo{width:48px;height:48px;border-radius:14px;background:#fff;display:grid;place-items:center;margin-right:6px}.logo svg{width:34px;height:34px;fill:none;stroke:#6c63ff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.jcard .form{grid-template-columns:2fr 3fr 3fr 3fr 1.6fr;align-items:end}.jcard .form label{text-transform:uppercase;letter-spacing:.02em;font-size:11px}.jcard .form label small{text-transform:none;font-weight:600;opacity:.85}
+.jcard .qs{grid-column:1/-1}.jcard .qs select{font-weight:600;padding:.7em .9em}
+.btn.t{background:linear-gradient(90deg,#14d6a4,#35e0c0);padding:.7em 1.6em}
+.jrow2{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-top:12px}.jrow2 label{font-weight:700;display:flex;gap:.5em;align-items:center;cursor:pointer}.jrow2 .hint{flex:1;min-width:260px}
+.jt{min-width:820px}.jt thead th{background:linear-gradient(90deg,#16b5f2,#35c4ff);text-transform:uppercase;letter-spacing:.04em;padding:12px 8px;font-size:12px}
+.jt td{vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--ln)}.jt td.ctr{text-align:center}
+.jt .ln{min-height:24px;line-height:24px}.jt .ln.cr{padding-left:48px}.jt .ln.dr{font-weight:700}.jt .ln.ds{font-style:italic;opacity:.9}.jt .ln.am{text-align:right}
+.jt .e{cursor:text;border-radius:6px;padding:1px 4px}.jt .e:hover{background:#ffffff1a;outline:1px dashed var(--ln)}
+.jt .e input,.jt .e select{padding:.2em .4em;width:auto;min-width:120px;border-color:var(--pri);background:var(--bg)}.jt .e input.r{min-width:110px}
+.btn.del{color:#fff;background:linear-gradient(90deg,#ff5c7a,#ff8a5c);padding:.5em 1em;font-size:12px}
+.jfoot{display:flex;gap:28px;flex-wrap:wrap;align-items:center;margin-top:0;padding:14px 18px;background:var(--card);border-radius:0 0 16px 16px;font-weight:700;box-shadow:0 4px 18px rgba(80,60,160,.1)}
+.jfoot .hint{margin-left:auto;font-weight:400}.jfoot.bad b.dd{color:var(--bad)}
+@media(max-width:900px){.jcard .form{grid-template-columns:1fr 1fr}.jcard .form>div{grid-column:auto}.jcard .qs{grid-column:1/-1}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style></head><body>
 
@@ -56,19 +74,20 @@ dialog{border:0;border-radius:20px;max-width:620px;padding:24px;background:var(-
 <button class="btn" id="bin">Log in</button><button class="btn g" id="bup">Create account</button></div></div></section>
 
 <div id="app" hidden>
-<header><div><h1>Accounting System</h1><p id="hello">Simple bookkeeping for everyone</p></div><span class="sp"></span>
-<button class="btn s" id="bguide">? Guide</button><button class="btn s" id="btheme">Dark mode</button><button class="btn s" id="bout">Log out</button></header>
-<nav><button data-t="j" class="on">1. Journal</button><button data-t="l">2. General ledger</button><button data-t="w">3. Worksheet</button></nav>
+<header><span class="logo"><svg viewBox="0 0 24 24"><path d="M12 3v18M7 21h10M4 7h16M6 7l-3 7a3 3 0 006 0zM18 7l-3 7a3 3 0 006 0z"/></svg></span><div><h1>Accounting System</h1><p id="hello">Simple bookkeeping for everyone</p></div><span class="sp"></span>
+<button class="btn s" id="bguide">? Guide</button><button class="btn s" id="btheme">Dark mode</button><button class="btn s" id="bout">Logout</button></header>
+<nav><button data-t="j" class="on"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>1. Journal</button><button data-t="l"><svg viewBox="0 0 24 24"><path d="M4 5h16M12 5v15M8 20h8"/></svg>2. General Ledger</button><button data-t="w"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>3. Worksheet</button></nav>
 <main>
-<section id="j" class="on"><div class="card"><div class="form">
-<div style="grid-column:1/-1"><label>Quick start - pick an example and the form fills itself in</label><select id="quick"></select></div>
+<section id="j" class="on"><div class="card jcard"><div class="form">
+<div class="qs"><label>Quick start <small>(optional - pick an example and the form fills itself in)</small></label><select id="quick"></select></div>
 <div><label>Date</label><input id="fd" type="date"></div><div><label>What happened?</label><input id="fs" placeholder="e.g. Paid for office supplies"></div>
-<div><label>Debit (gets the value)</label><select id="fr"></select></div><div><label>Credit (gives the value)</label><select id="fc"></select></div>
-<div><label>Amount</label><input id="fa" inputmode="decimal" placeholder="e.g. 1500.00"></div>
-<div><label><input type="checkbox" id="fj" style="width:auto"> Adjusting entry</label></div>
-<div><button class="btn g" id="post" style="width:100%">+ Post transaction</button></div></div>
-<p class="hint" style="margin-top:10px">Tip: debit = what you received or spent on. Credit = where it came from. Typo? Change any cell in the list below - it saves by itself.</p></div>
-<div class="wrap"><table><thead><tr><th>Date</th><th>Description</th><th>Debit</th><th>Credit</th><th>Amount</th><th>Type</th><th></th></tr></thead><tbody id="jb"></tbody></table></div></section>
+<div><label>Debit <small>(gets the value)</small></label><select id="fr"></select></div><div><label>Credit <small>(gives the value)</small></label><select id="fc"></select></div>
+<div><label>Amount</label><input id="fa" inputmode="decimal" placeholder="e.g. 1500.00"></div></div>
+<div class="jrow2"><button class="btn t" id="post">+ Post Transaction</button></div>
+<div class="jrow2"><label><input type="checkbox" id="fj" style="width:auto"> This is an adjusting entry</label>
+<p class="hint">Tip: DEBIT = what you received or spent on. CREDIT = where it came from. The same amount always goes on both sides. Typo? Double-click any date, account, amount, description or type in the list below to edit it.</p></div></div>
+<div class="wrap" style="margin-bottom:0;border-radius:16px 16px 0 0"><table class="jt"><thead><tr><th style="width:130px">Date</th><th>Particulars</th><th style="width:150px">Debit</th><th style="width:150px">Credit</th><th style="width:110px">Type</th><th style="width:170px"></th></tr></thead><tbody id="jb"></tbody></table></div>
+<div class="jfoot" id="jf"><span id="jn">Transactions: 0</span><span id="jd">Total Debit: 0.00</span><span id="jc">Total Credit: 0.00</span><span class="hint">Your work is saved automatically &bull; Hover over any button or box for help &bull; Press ? Guide anytime</span></div></section>
 
 <section id="l"><div class="card"><label class="hint">Account</label><select id="la"></select></div>
 <div class="led"><div class="card" id="tacc"></div><div class="wrap" style="margin:0"><table><thead><tr><th>Date</th><th>Description</th><th>Debit</th><th>Credit</th><th>Balance</th></tr></thead><tbody id="lb"></tbody></table></div></div></section>
@@ -166,8 +185,10 @@ function count(el,to){const from=+el.dataset.v||0;el.dataset.v=to;const t0=perfo
  el.textContent=(from+(to-from)*(1-Math.pow(1-p,3))).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});if(p<1)requestAnimationFrame(f)};requestAnimationFrame(f)}
 function render(){const R=calc();journal();ledger();sheet(R)}
 function journal(){const keep=[$('#fr').value,$('#fc').value];$('#fr').innerHTML=opts(keep[0]);$('#fc').innerHTML=opts(keep[1]||(S.accounts[1]||{}).id);
- $('#jb').innerHTML=S.txns.map(t=>`<tr data-id="${t.id}"><td><input type="date" class="d" value="${t.date}"></td><td><input class="s" value="${esc(t.desc)}"></td><td><select class="dr">${opts(t.dr)}</select></td><td><select class="cr">${opts(t.cr)}</select></td><td><input class="a r" value="${fmt(t.amt)}"></td><td><select class="j"><option value="0">Regular<option value="1"${t.adj?' selected':''}>Adjusting</select></td><td><button class="x" title="Delete transaction">&#10005;</button></td></tr>`).join('')
- ||'<tr><td colspan="7" class="empty"><b>No transactions yet</b><br>Pick a Quick start example above, or fill in the form, then press Post transaction.</td></tr>'}
+ const nm=id=>esc((S.accounts.find(a=>a.id==id)||{}).name||'?'),E=(f,h,tip)=>`<span class="e" data-f="${f}" title="${tip||'Double-click to edit'}">${h}</span>`;
+ $('#jb').innerHTML=S.txns.map(t=>`<tr data-id="${t.id}"><td class="ctr">${E('d',t.date)}</td><td><div class="ln dr">${E('dr',nm(t.dr))}</div><div class="ln cr">${E('cr',nm(t.cr))}</div><div class="ln ds">${E('s','('+esc(t.desc)+')')}</div></td><td><div class="ln am">${E('a',fmt(t.amt))}</div></td><td><div class="ln"></div><div class="ln am">${E('a',fmt(t.amt))}</div></td><td class="ctr">${E('j',t.adj?'Adjusting':'Regular')}</td><td class="ctr"><button class="btn del x" title="Delete this transaction">Delete Transaction</button></td></tr>`).join('')
+ ||'<tr><td colspan="6" class="empty"><b>No transactions yet</b><br>Pick a Quick start example above, or fill in the form, then press Post Transaction.</td></tr>';
+ const dt=S.txns.reduce((a,t)=>a+t.amt,0);$('#jn').textContent='Transactions: '+S.txns.length;$('#jd').textContent='Total Debit: '+(fmt(dt)||'0.00');$('#jc').textContent='Total Credit: '+(fmt(dt)||'0.00')}
 function ledger(){const sel=$('#la'),id=sel.value||(S.accounts[0]||{}).id;sel.innerHTML=opts(id);const a=S.accounts.find(x=>x.id==id);if(!a){$('#lb').innerHTML='';$('#tacc').innerHTML='';return}
  let bal=0,dt=0,ct=0;const ls=S.txns.filter(t=>t.dr==id||t.cr==id).map(t=>{const d=t.dr==id;bal+=d?t.amt:-t.amt;d?dt+=t.amt:ct+=t.amt;return{...t,d,bal}});
  $('#lb').innerHTML=ls.map(l=>`<tr data-id="${l.id}"><td><input type="date" class="d" value="${l.date}"></td><td><input class="s" value="${esc(l.desc)}"></td><td><input class="ld r" value="${l.d?fmt(l.amt):''}"></td><td><input class="lc r" value="${l.d?'':fmt(l.amt)}"></td><td class="r">${fmt(Math.abs(l.bal))||'0.00'} ${l.bal>=0?'Dr':'Cr'}</td></tr>`).join('')
@@ -184,7 +205,15 @@ function sheet(R){const{tot,ni,fin}=R,f=v=>v.map(x=>`<td class="r">${fmt(x)}</td
  $('#sm').textContent=empty?'Add a transaction to begin':bad<0?'Debit = credit in every column':'Check: '+G[bad]}
 const row=(tr,c)=>tr.querySelector('.'+c);
 async function saveTx(b){await api('txn.save',b);await load()}
-$('#jb').onchange=e=>{const tr=e.target.closest('tr');saveTx({id:tr.dataset.id,tdate:row(tr,'d').value,description:row(tr,'s').value,debit_id:row(tr,'dr').value,credit_id:row(tr,'cr').value,amount:num(row(tr,'a').value),adjusting:+row(tr,'j').value})};
+$('#jb').ondblclick=e=>{const sp=e.target.closest('.e');if(!sp||sp.querySelector('input,select'))return;const tr=sp.closest('tr'),t=S.txns.find(x=>x.id==tr.dataset.id),f=sp.dataset.f;
+ const h={d:`<input type="date" value="${t.date}">`,s:`<input value="${esc(t.desc)}">`,a:`<input class="r" value="${t.amt}">`,dr:`<select>${opts(t.dr)}</select>`,cr:`<select>${opts(t.cr)}</select>`,j:`<select><option value="0">Regular</option><option value="1"${t.adj?' selected':''}>Adjusting</option></select>`}[f];
+ if(!h)return;sp.innerHTML=h;const i=sp.firstChild;i.focus();let done=0;
+ const fin=ok=>{if(done)return;done=1;const b={id:t.id,tdate:t.date,description:t.desc,debit_id:t.dr,credit_id:t.cr,amount:t.amt,adjusting:t.adj},v=i.value;
+  if(!ok)return render();
+  if(f=='d')b.tdate=v;else if(f=='s')b.description=v;else if(f=='a')b.amount=num(v);else if(f=='dr')b.debit_id=v;else if(f=='cr')b.credit_id=v;else b.adjusting=+v;
+  if(b.tdate==t.date&&b.description==t.desc&&b.debit_id==t.dr&&b.credit_id==t.cr&&b.amount==t.amt&&b.adjusting==t.adj)return render();
+  saveTx(b).catch(()=>load())};
+ i.onchange=()=>fin(1);i.onblur=()=>fin(1);i.onkeydown=ev=>{if(ev.key=='Enter')fin(1);if(ev.key=='Escape')fin(0)}};
 $('#jb').onclick=async e=>{if(!e.target.classList.contains('x')||!confirm('Delete this transaction?'))return;await api('txn.delete',{id:e.target.closest('tr').dataset.id});load()};
 $('#lb').onchange=e=>{const tr=e.target.closest('tr'),t=S.txns.find(x=>x.id==tr.dataset.id),id=$('#la').value,c=e.target.className.split(' ')[0];
  const b={id:t.id,tdate:t.date,description:t.desc,debit_id:t.dr,credit_id:t.cr,amount:t.amt,adjusting:t.adj};
